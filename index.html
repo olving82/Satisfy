@@ -513,7 +513,7 @@
     
     <script>
         // v3.0 - Added allergies filtering
-        const API_URL = 'http://localhost:5000';
+        const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:5000' : '';
         let currentUser = null;
         let showPrices = false;
         let likedDrinks = [];
@@ -1075,3 +1075,4 @@
         }
     </script>
 </body>
+</html>
