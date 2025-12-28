@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Satisfy Intelligence - Smart Recommendations</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'SoDo Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: #f7f7f7;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            background: white;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            background: #00704A;
+            color: white;
+            padding: 30px 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+            font-weight: 400;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .login-section {
+            text-align: center;
+            padding: 40px;
+            background: #f9f9f9;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .login-section h2 {
+            margin-bottom: 20px;
+            color: #00704A;
+            font-weight: 600;
+        }
+        
+        .fb-login-btn {
+            background: #1877f2;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1em;
+            border-radius: 50px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .fb-login-btn:hover {
+            background: #166fe5;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        
+        .fb-login-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .user-info {
+            background: #e8f5e9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            display: none;
+        }
+        
+        .user-info.active {
+            display: block;
+        }
+        
+        .user-info h3 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+        }
+        
+        .recommendation-section {
+            margin-top: 30px;
+        }
+        
+        .query-box {
+            margin-bottom: 20px;
+        }
+        
+        .query-box input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1em;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .get-recommendations-btn {
+            background: #00704A;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .get-recommendations-btn:hover {
+            background: #005a3a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+            padding: 0 40px 40px 40px;
+        }
+        
+        .product-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+            border-color: #00704A;
+        }
+        
+        .product-card h3 {
+            color: #1e3932;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+        
+        .product-card .category {
+            color: #00704A;
+            font-size: 0.85em;
+            margin-bottom: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .product-card .price {
+            font-size: 1.4em;
+            color: #00704A;
+            font-weight: bold;
+            margin: 12px 0;
+        }
+        
+        .product-card .rating {
+            color: #d4af37;
+            font-size: 0.95em;
+        }
+        
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .logout-btn:hover {
+            background: #c82333;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            body {
+                font-size: 14px;
+            }
+            
+            .header {
+                padding: 20px 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .header p {
+                font-size: 0.95em;
+            }
+            
+            .content {
+                padding: 15px;
+            }
+            
+            .login-section {
+                padding: 20px 15px;
+            }
+            
+            .fb-login-btn {
+                padding: 12px 25px;
+                font-size: 0.95em;
+            }
+            
+            .user-info {
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+            
+            /* Make dashboard cards stack on mobile */
+            .dashboard-cards {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 15px !important;
+            }
+            
+            .dashboard-cards > div {
+                min-width: 100% !important;
+            }
+            
+            /* Reorder cards on mobile - move Dislikes to bottom */
+            .card-vendors { order: 1; }
+            .card-likes { order: 2; }
+            .card-allergies { order: 3; }
+            .card-dislikes { order: 4; }
+            
+            /* Intelligence Query Box */
+            .recommendation-section > div:nth-of-type(2) {
+                padding: 15px !important;
+            }
+            
+            #queryInput {
+                font-size: 0.95em !important;
+                padding: 10px !important;
+            }
+            
+            /* Category filter buttons */
+            #categoryFilters {
+                padding: 10px !important;
+            }
+            
+            .category-btn {
+                font-size: 0.8em !important;
+                padding: 6px 12px !important;
+            }
+            
+            .get-recommendations-btn {
+                padding: 12px 20px !important;
+                font-size: 1em !important;
+            }
+            
+            /* Products grid - single column on mobile */
+            .products-grid {
+                grid-template-columns: 1fr !important;
+                gap: 15px;
+                padding: 15px !important;
+                margin-top: 20px;
+            }
+            
+            .product-card {
+                padding: 15px;
+            }
+            
+            .product-card h3 {
+                font-size: 1.1em;
+            }
+            
+            /* Reduce spacing in cards */
+            .product-card .category {
+                font-size: 0.8em;
+                margin-bottom: 8px;
+            }
+            
+            .product-card .price {
+                font-size: 1.2em;
+                margin: 8px 0;
+            }
+            
+            /* Make input fields and buttons more touch-friendly */
+            input[type="text"] {
+                padding: 10px !important;
+                font-size: 0.95em !important;
+            }
+            
+            button {
+                padding: 10px 15px !important;
+                font-size: 0.9em !important;
+                min-height: 44px; /* iOS touch target size */
+            }
+            
+            /* Stats cards */
+            .recommendation-section > div:first-of-type > div {
+                padding: 15px !important;
+            }
+            
+            /* List containers */
+            #likesList, #dislikesList, #vendorsList {
+                max-height: 60px !important;
+                font-size: 0.85em !important;
+            }
+            
+            #allergiesList, #avoidList {
+                font-size: 0.85em !important;
+            }
+        }
+        
+        /* Extra small devices (phones in portrait, less than 400px) */
+        @media (max-width: 400px) {
+            .header h1 {
+                font-size: 1.5em;
+            }
+            
+            .content {
+                padding: 10px;
+            }
+            
+            .products-grid {
+                padding: 10px !important;
+            }
+            
+            .product-card {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>☕ Satisfy Intelligence</h1>
+            <p>Smart Recommendations Powered by Local Intelligence</p>
+        </div>
+        
+        <div class="content">
+            <div class="login-section" id="loginSection">
+                <h2>Sign in to get personalized recommendations</h2>
+                <button class="fb-login-btn" onclick="loginWithFacebook()">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                    </svg>
+                    Continue with Facebook
+                </button>
+                <p style="margin-top: 20px; color: #666;">Or browse without signing in</p>
+            </div>
+            
+            <div class="user-info" id="userInfo">
+                <h3>Welcome, <span id="userName"></span>!</h3>
+                <p>Email: <span id="userEmail"></span></p>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+            
+            <div class="recommendation-section">
+                <h2 style="margin-bottom: 20px;">☕ Intelligence-Powered Recommendations</h2>
+                
+                <!-- Dashboard Stats -->
+                <div class="dashboard-cards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 25px;">
+                    <!-- Preferred Vendors Card -->
+                    <div class="card-vendors" style="background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%); padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <strong style="font-size: 1.1em;">⭐ Preferred Vendors</strong>
+                            <span style="background: #17a2b8; color: white; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 0.9em;" id="vendorCount">0</span>
+                        </div>
+                        <div id="vendorsList" style="max-height: 80px; overflow-y: auto; font-size: 0.9em; color: #666; margin-bottom: 10px;">
+                            <em>No preferred vendors yet</em>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="vendorsInput" placeholder="Starbucks, Dunkin, Costa..." 
+                                   style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9em;" />
+                            <button onclick="saveVendors()" style="padding: 8px 15px; background: #17a2b8; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9em; white-space: nowrap;">Save</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Likes Card -->
+                    <div class="card-likes" style="background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <strong style="font-size: 1.1em;">💚 Likes</strong>
+                            <span style="background: #28a745; color: white; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 0.9em;" id="likeCount">0</span>
+                        </div>
+                        <div id="likesList" style="max-height: 120px; overflow-y: auto; font-size: 0.9em; color: #666;">
+                            <em>No likes yet</em>
+                        </div>
+                        <button onclick="clearLikes()" style="margin-top: 10px; width: 100%; padding: 8px; background: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9em;">Clear All</button>
+                    </div>
+                    
+                    <!-- Dislikes Card -->
+                    <div class="card-dislikes" style="background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%); padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <strong style="font-size: 1.1em;">👎 Dislikes</strong>
+                            <span style="background: #ffc107; color: #000; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 0.9em;" id="dislikeCount">0</span>
+                        </div>
+                        <div id="dislikesList" style="max-height: 120px; overflow-y: auto; font-size: 0.9em; color: #666;">
+                            <em>No dislikes yet</em>
+                        </div>
+                        <button onclick="clearDislikes()" style="margin-top: 10px; width: 100%; padding: 8px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9em;">Clear All</button>
+                    </div>
+                    
+                    <!-- Allergies & Avoid Card -->
+                    <div class="card-allergies" style="background: linear-gradient(135deg, #f8d7da 0%, #f5c2c7 100%); padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <strong style="font-size: 1.1em;">🚫 Allergies & Restrictions</strong>
+                            <span style="background: #dc3545; color: white; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 0.9em;" id="restrictionCount">0</span>
+                        </div>
+                        <div style="margin-bottom: 12px;">
+                            <label style="font-size: 0.85em; font-weight: 600; color: #721c24; display: block; margin-bottom: 4px;">⚠️ Allergies:</label>
+                            <div id="allergiesList" style="min-height: 25px; margin-bottom: 8px; font-size: 0.9em; color: #666;">
+                                <em>None</em>
+                            </div>
+                            <div id="substitutionSuggestions" style="display: none; background: #fff; padding: 10px; border-radius: 6px; margin-bottom: 8px; font-size: 0.85em; border-left: 3px solid #28a745;">
+                                <strong style="color: #28a745;">💡 Substitution Options:</strong>
+                                <div id="substitutionList" style="margin-top: 5px; color: #555;"></div>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <input type="text" id="allergiesInput" placeholder="dairy, nuts, soy..." 
+                                       style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9em;" />
+                                <button onclick="saveAllergies()" style="padding: 8px 15px; background: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9em; white-space: nowrap;">Save</button>
+                            </div>
+                        </div>
+                        <div>
+                            <label style="font-size: 0.85em; font-weight: 600; color: #721c24; display: block; margin-bottom: 4px;">🚷 Avoid:</label>
+                            <div id="avoidList" style="min-height: 25px; margin-bottom: 8px; font-size: 0.9em; color: #666;">
+                                <em>None</em>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <input type="text" id="avoidInput" placeholder="Type item and press Add (e.g., espresso, sweet, iced)" 
+                                       onkeypress="if(event.key==='Enter'){addAvoidItem(); return false;}"
+                                       style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 0.9em;" />
+                                <button onclick="addAvoidItem()" style="padding: 8px 15px; background: #e67e00; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9em; white-space: nowrap;">Add</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Intelligence Query Box -->
+                <div style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); padding: 25px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <h3 style="margin: 0 0 15px 0; color: #00704A;">🤖 What are you looking for?</h3>
+                    <div class="query-box">
+                        <input type="text" id="queryInput" placeholder="e.g., 'smooth morning coffee', 'bold espresso', 'fruity refresher'..." 
+                               oninput="showCategoryFilters()"
+                               style="width: 100%; padding: 12px; border: 2px solid #00704A; border-radius: 8px; font-size: 1em; margin-bottom: 12px;" />
+                        
+                        <!-- Category Filters (initially hidden) -->
+                        <div id="categoryFilters" style="display: none; margin-bottom: 15px; padding: 15px; background: white; border-radius: 8px;">
+                            <p style="margin: 0 0 10px 0; font-size: 0.9em; color: #666; font-weight: 600;">📂 Narrow by category (optional):</p>
+                            <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                <button onclick="filterByCategory('all')" class="category-btn" data-category="all" style="padding: 8px 16px; background: #00704A; color: white; border: none; border-radius: 20px; cursor: pointer; font-size: 0.85em; font-weight: 600;">All</button>
+                                <button onclick="filterByCategory('Hot Coffees')" class="category-btn" data-category="Hot Coffees" style="padding: 8px 16px; background: #f0f0f0; color: #333; border: none; border-radius: 20px; cursor: pointer; font-size: 0.85em;">☕ Hot Coffees</button>
+                                <button onclick="filterByCategory('Cold Coffees')" class="category-btn" data-category="Cold Coffees" style="padding: 8px 16px; background: #f0f0f0; color: #333; border: none; border-radius: 20px; cursor: pointer; font-size: 0.85em;">🧊 Cold Coffees</button>
+                                <button onclick="filterByCategory('Frappuccino')" class="category-btn" data-category="Frappuccino" style="padding: 8px 16px; background: #f0f0f0; color: #333; border: none; border-radius: 20px; cursor: pointer; font-size: 0.85em;">🥤 Frappuccino</button>
+                                <button onclick="filterByCategory('Hot Teas')" class="category-btn" data-category="Hot Teas" style="padding: 8px 16px; background: #f0f0f0; color: #333; border: none; border-radius: 20px; cursor: pointer; font-size: 0.85em;">🍵 Hot Teas</button>
+                                <button onclick="filterByCategory('Iced Teas')" class="category-btn" data-category="Iced Teas" style="padding: 8px 16px; background: #f0f0f0; color: #333; border: none; border-radius: 20px; cursor: pointer; font-size: 0.85em;">🧋 Iced Teas</button>
+                                <button onclick="filterByCategory('Refreshers')" class="category-btn" data-category="Refreshers" style="padding: 8px 16px; background: #f0f0f0; color: #333; border: none; border-radius: 20px; cursor: pointer; font-size: 0.85em;">🍓 Refreshers</button>
+                                <button onclick="filterByCategory('Espresso')" class="category-btn" data-category="Espresso" style="padding: 8px 16px; background: #f0f0f0; color: #333; border: none; border-radius: 20px; cursor: pointer; font-size: 0.85em;">☕ Espresso</button>
+                            </div>
+                        </div>
+                        
+                        <button class="get-recommendations-btn" onclick="getRecommendations(); return false;" 
+                                style="width: 100%; padding: 12px; background: #00704A; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1.1em; font-weight: bold;">
+                            Get Smart Recommendations ✨
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="productsContainer"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // v3.0 - Added allergies filtering
+        const API_URL = 'http://localhost:5000';
+        let currentUser = null;
+        let showPrices = false;
+        let likedDrinks = [];
+        let dislikedDrinks = [];
+        let allergies = [];
+        let avoidList = [];
+        let preferredVendors = [];
+        let selectedCategory = 'all';
+        
+        // Check if user is already logged in
+        window.onload = function() {
+            const user = localStorage.getItem('satisfy_user');
+            if (user) {
+                currentUser = JSON.parse(user);
+                showUserInfo();
+            }
+            
+            // Load dislikes from localStorage
+            const savedDislikes = localStorage.getItem('disliked_drinks');
+            if (savedDislikes) {
+                dislikedDrinks = JSON.parse(savedDislikes);
+            }
+            
+            // Load likes from localStorage
+            const savedLikes = localStorage.getItem('liked_drinks');
+            if (savedLikes) {
+                likedDrinks = JSON.parse(savedLikes);
+            }
+            
+            // Load allergies from localStorage
+            const savedAllergies = localStorage.getItem('allergies');
+            if (savedAllergies) {
+                allergies = JSON.parse(savedAllergies);
+                document.getElementById('allergiesInput').value = allergies.join(', ');
+            }
+            
+            // Load avoid list from localStorage
+            const savedAvoid = localStorage.getItem('avoid_list');
+            if (savedAvoid) {
+                avoidList = JSON.parse(savedAvoid);
+            }
+            
+            // Load preferred vendors from localStorage
+            const savedVendors = localStorage.getItem('preferred_vendors');
+            if (savedVendors) {
+                preferredVendors = JSON.parse(savedVendors);
+            }
+            
+            loadSettings();
+            loadProducts();
+            updateAllergiesList();
+            updateVendorsList();
+        };
+        
+        async function trackInteraction(productId, type, action) {
+            try {
+                await fetch(`${API_URL}/api/product-interaction`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        product_id: productId,
+                        type: type,
+                        action: action
+                    })
+                });
+            } catch (error) {
+                console.error('Error tracking interaction:', error);
+            }
+        }
+        
+        function toggleDislike(productId, productName) {
+            const index = dislikedDrinks.indexOf(productId);
+            if (index > -1) {
+                // Remove from dislikes
+                dislikedDrinks.splice(index, 1);
+                trackInteraction(productId, 'dislike', 'remove');
+            } else {
+                // Add to dislikes
+                dislikedDrinks.push(productId);
+                trackInteraction(productId, 'dislike', 'add');
+                // Remove from likes if present
+                const likeIndex = likedDrinks.indexOf(productId);
+                if (likeIndex > -1) {
+                    likedDrinks.splice(likeIndex, 1);
+                    localStorage.setItem('liked_drinks', JSON.stringify(likedDrinks));
+                }
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('disliked_drinks', JSON.stringify(dislikedDrinks));
+            
+            // Reload products to update UI
+            loadProducts();
+        }
+        
+        function toggleLike(productId, productName) {
+            const index = likedDrinks.indexOf(productId);
+            if (index > -1) {
+                // Remove from likes
+                likedDrinks.splice(index, 1);
+                trackInteraction(productId, 'like', 'remove');
+            } else {
+                // Add to likes
+                likedDrinks.push(productId);
+                trackInteraction(productId, 'like', 'add');
+                // Remove from dislikes if present
+                const dislikeIndex = dislikedDrinks.indexOf(productId);
+                if (dislikeIndex > -1) {
+                    dislikedDrinks.splice(dislikeIndex, 1);
+                    trackInteraction(productId, 'dislike', 'remove');
+                    localStorage.setItem('disliked_drinks', JSON.stringify(dislikedDrinks));
+                }
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('liked_drinks', JSON.stringify(likedDrinks));
+            
+            // Reload products to update UI
+            loadProducts();
+        }
+        
+        function clearDislikes() {
+            if (confirm('Clear all dislikes?')) {
+                dislikedDrinks = [];
+                localStorage.removeItem('disliked_drinks');
+                loadProducts();
+            }
+        }
+        
+        function removeFromDislikes(productId) {
+            const index = dislikedDrinks.indexOf(productId);
+            if (index > -1) {
+                dislikedDrinks.splice(index, 1);
+                trackInteraction(productId, 'dislike', 'remove');
+                localStorage.setItem('disliked_drinks', JSON.stringify(dislikedDrinks));
+                loadProducts();
+            }
+        }
+        
+        function removeFromLikes(productId) {
+            const index = likedDrinks.indexOf(productId);
+            if (index > -1) {
+                likedDrinks.splice(index, 1);
+                trackInteraction(productId, 'like', 'remove');
+                localStorage.setItem('liked_drinks', JSON.stringify(likedDrinks));
+                loadProducts();
+            }
+        }
+        
+        function clearLikes() {
+            if (confirm('Clear all likes?')) {
+                likedDrinks = [];
+                localStorage.removeItem('liked_drinks');
+                loadProducts();
+            }
+        }
+        
+        function saveAllergies() {
+            const input = document.getElementById('allergiesInput').value;
+            allergies = input.split(',').map(a => a.trim()).filter(a => a.length > 0);
+            localStorage.setItem('allergies', JSON.stringify(allergies));
+            updateAllergiesList();
+            showSubstitutionSuggestions();
+            alert('Allergies saved! These will be excluded from recommendations.');
+        }
+        
+        function showSubstitutionSuggestions() {
+            const suggestionBox = document.getElementById('substitutionSuggestions');
+            const suggestionList = document.getElementById('substitutionList');
+            
+            if (allergies.length === 0) {
+                suggestionBox.style.display = 'none';
+                return;
+            }
+            
+            const suggestions = [];
+            const allergyText = allergies.join(' ').toLowerCase();
+            
+            if (allergyText.includes('milk') || allergyText.includes('dairy')) {
+                suggestions.push('🥛 <strong>Milk alternatives:</strong> Oat milk, Almond milk, Soy milk, Coconut milk');
+            }
+            if (allergyText.includes('soy')) {
+                suggestions.push('🌾 <strong>Soy alternatives:</strong> Oat milk, Almond milk, Coconut milk');
+            }
+            if (allergyText.includes('nut') || allergyText.includes('almond')) {
+                suggestions.push('🌰 <strong>Nut-free options:</strong> Oat milk, Soy milk (avoid almond milk)');
+            }
+            if (allergyText.includes('chocolate') || allergyText.includes('cocoa')) {
+                suggestions.push('🍫 <strong>Chocolate alternatives:</strong> Vanilla, Caramel, Fruit-based drinks');
+            }
+            if (allergyText.includes('caffeine')) {
+                suggestions.push('☕ <strong>Caffeine-free:</strong> Decaf versions, Herbal teas, Hot chocolate, Refreshers');
+            }
+            if (allergyText.includes('gluten')) {
+                suggestions.push('🌾 <strong>Note:</strong> Most drinks are gluten-free (avoid toppings with cookies/wafers)');
+            }
+            
+            if (suggestions.length > 0) {
+                suggestionList.innerHTML = suggestions.join('<br>');
+                suggestionBox.style.display = 'block';
+            } else {
+                suggestionBox.style.display = 'none';
+            }
+        }
+        
+        function saveAvoid() {
+            const input = document.getElementById('avoidInput').value;
+            avoidList = input.split(',').map(a => a.trim()).filter(a => a.length > 0);
+            localStorage.setItem('avoid_list', JSON.stringify(avoidList));
+            updateAllergiesList();
+            alert('Avoid list saved! These will be excluded from recommendations.');
+        }
+        
+        function addAvoidItem() {
+            const input = document.getElementById('avoidInput');
+            const item = input.value.trim();
+            
+            if (item.length === 0) {
+                return;
+            }
+            
+            if (!avoidList.includes(item.toLowerCase())) {
+                avoidList.push(item.toLowerCase());
+                localStorage.setItem('avoid_list', JSON.stringify(avoidList));
+                updateAllergiesList();
+                input.value = '';
+            } else {
+                alert('This item is already in your avoid list!');
+            }
+        }
+        
+        function removeAvoidItem(item) {
+            avoidList = avoidList.filter(a => a !== item);
+            localStorage.setItem('avoid_list', JSON.stringify(avoidList));
+            updateAllergiesList();
+        }
+        
+        function saveVendors() {
+            const input = document.getElementById('vendorsInput').value;
+            preferredVendors = input.split(',').map(v => v.trim()).filter(v => v.length > 0);
+            localStorage.setItem('preferred_vendors', JSON.stringify(preferredVendors));
+            updateVendorsList();
+            alert('Preferred vendors saved! AI will prioritize these brands.');
+        }
+        
+        function updateVendorsList() {
+            const vendorsList = document.getElementById('vendorsList');
+            const vendorCount = document.getElementById('vendorCount');
+            
+            vendorCount.textContent = preferredVendors.length;
+            
+            if (preferredVendors.length === 0) {
+                vendorsList.innerHTML = '<em>No preferred vendors yet</em>';
+            } else {
+                vendorsList.innerHTML = preferredVendors.map(v => 
+                    `<span style="display: inline-block; background: #17a2b8; color: white; padding: 4px 10px; border-radius: 15px; margin: 2px; font-size: 0.85em;">
+                        ${v}
+                    </span>`
+                ).join('');
+            }
+        }
+        
+        async function loadSettings() {
+            try {
+                const response = await fetch(`${API_URL}/api/settings`);
+                const settings = await response.json();
+                showPrices = settings.show_prices;
+            } catch (error) {
+                console.error('Error loading settings:', error);
+            }
+        }
+        
+        function loginWithFacebook() {
+            // In production, implement actual Facebook OAuth
+            // For now, simulate login
+            const mockUser = {
+                id: 'user_' + Date.now(),
+                name: prompt('Enter your name (Facebook login will be configured):') || 'Guest User',
+                email: 'user@example.com'
+            };
+            
+            currentUser = mockUser;
+            localStorage.setItem('satisfy_user', JSON.stringify(mockUser));
+            showUserInfo();
+            
+            alert('Facebook OAuth will be configured with your Facebook App credentials. For now, using demo login.');
+        }
+        
+        function showUserInfo() {
+            document.getElementById('loginSection').style.display = 'none';
+            
+            // Update dislikes list
+            const dislikesList = document.getElementById('dislikesList');
+            if (dislikedDrinks.length === 0) {
+                dislikesList.innerHTML = '<em>No dislikes yet</em>';
+            } else {
+                // Find product names for disliked IDs
+                fetch(`${API_URL}/api/products`)
+                    .then(res => res.json())
+                    .then(products => {
+                        const dislikedProducts = products.filter(p => dislikedDrinks.includes(p.id));
+                        dislikesList.innerHTML = dislikedProducts.map(p => 
+                            `<div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid #f0f0f0;">
+                                <span>• ${p.name}</span>
+                                <button onclick="removeFromDislikes(${p.id})" style="background: none; border: none; color: #dc3545; cursor: pointer; font-size: 1.1em; padding: 0 5px;" title="Remove from dislikes">✕</button>
+                            </div>`
+                        ).join('');
+                    });
+            }
+        }
+        
+        function updateAllergiesList() {
+            const allergiesList = document.getElementById('allergiesList');
+            const avoidListEl = document.getElementById('avoidList');
+            const restrictionCount = document.getElementById('restrictionCount');
+            
+            const totalCount = allergies.length + avoidList.length;
+            restrictionCount.textContent = totalCount;
+            
+            if (allergies.length === 0) {
+                allergiesList.innerHTML = '<em>None</em>';
+            } else {
+                allergiesList.innerHTML = allergies.map(a => 
+                    `<span style="display: inline-block; background: #dc3545; color: white; padding: 4px 10px; border-radius: 15px; margin: 2px; font-size: 0.85em;">
+                        ${a}
+                    </span>`
+                ).join('');
+            }
+            
+            // Update substitution suggestions whenever list changes
+            showSubstitutionSuggestions();
+            
+            if (avoidList.length === 0) {
+                avoidListEl.innerHTML = '<em>None</em>';
+            } else {
+                avoidListEl.innerHTML = avoidList.map(a => 
+                    `<span style="display: inline-block; background: #e67e00; color: white; padding: 4px 10px; border-radius: 15px; margin: 2px; font-size: 0.85em; cursor: pointer;" onclick="removeAvoidItem('${a}')" title="Click to remove">
+                        ${a} ✕
+                    </span>`
+                ).join('');
+            }
+        }
+        
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('satisfy_user');
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('userInfo').classList.remove('active');
+        }
+        
+        async function loadProducts() {
+            try {
+                const response = await fetch(`${API_URL}/api/products`);
+                const products = await response.json();
+                displayProducts(products, '☕ All Drinks');
+                updateDislikeCount();
+                updateLikeCount();
+            } catch (error) {
+                console.error('Error loading products:', error);
+            }
+        }
+        
+        function updateLikeCount() {
+            document.getElementById('likeCount').textContent = likedDrinks.length;
+            
+            // Update likes list
+            const likesList = document.getElementById('likesList');
+            if (likedDrinks.length === 0) {
+                likesList.innerHTML = '<em>No likes yet</em>';
+            } else {
+                // Find product names for liked IDs
+                fetch(`${API_URL}/api/products`)
+                    .then(res => res.json())
+                    .then(products => {
+                        const likedProducts = products.filter(p => likedDrinks.includes(p.id));
+                        likesList.innerHTML = likedProducts.map(p => 
+                            `<div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid #f0f0f0;">
+                                <span>• ${p.name}</span>
+                                <button onclick="removeFromLikes(${p.id})" style="background: none; border: none; color: #28a745; cursor: pointer; font-size: 1.1em; padding: 0 5px;" title="Remove from likes">✕</button>
+                            </div>`
+                        ).join('');
+                    });
+            }
+        }
+        
+        async function filterByCategory(category) {
+            selectedCategory = category;
+            
+            // Update button styles
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                if (btn.dataset.category === category) {
+                    btn.style.background = '#00704A';
+                    btn.style.color = 'white';
+                } else {
+                    btn.style.background = '#f0f0f0';
+                    btn.style.color = '#333';
+                }
+            });
+            
+            try {
+                const response = await fetch(`${API_URL}/api/products`);
+                const allProducts = await response.json();
+                
+                let filtered = allProducts;
+                if (category !== 'all') {
+                    filtered = allProducts.filter(p => p.category === category);
+                }
+                
+                const title = category === 'all' ? '☕ All Drinks' : `${getCategoryEmoji(category)} ${category}`;
+                displayProducts(filtered, title);
+            } catch (error) {
+                console.error('Error filtering products:', error);
+            }
+        }
+        
+        function getCategoryEmoji(category) {
+            const emojiMap = {
+                'Hot Coffees': '☕',
+                'Cold Coffees': '🧊',
+                'Frappuccino': '🥤',
+                'Hot Teas': '🍵',
+                'Iced Teas': '🧋',
+                'Refreshers': '🍓',
+                'Espresso': '☕'
+            };
+            return emojiMap[category] || '☕';
+        }
+        
+        function showCategoryFilters() {
+            const input = document.getElementById('queryInput').value;
+            const filters = document.getElementById('categoryFilters');
+            
+            if (input.trim().length > 0) {
+                filters.style.display = 'block';
+            } else {
+                filters.style.display = 'none';
+            }
+        }
+        
+        function updateDislikeCount() {
+            document.getElementById('dislikeCount').textContent = dislikedDrinks.length;
+            
+            // Update dislikes list
+            const dislikesList = document.getElementById('dislikesList');
+            if (dislikedDrinks.length === 0) {
+                dislikesList.innerHTML = '<em>No dislikes yet</em>';
+            } else {
+                // Find product names for disliked IDs
+                fetch(`${API_URL}/api/products`)
+                    .then(res => res.json())
+                    .then(products => {
+                        const dislikedProducts = products.filter(p => dislikedDrinks.includes(p.id));
+                        dislikesList.innerHTML = dislikedProducts.map(p => 
+                            `<div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid #f0f0f0;">
+                                <span>• ${p.name}</span>
+                                <button onclick="removeFromDislikes(${p.id})" style="background: none; border: none; color: #dc3545; cursor: pointer; font-size: 1.1em; padding: 0 5px;" title="Remove from dislikes">✕</button>
+                            </div>`
+                        ).join('');
+                    });
+            }
+        }
+        
+        async function getRecommendations() {
+            const query = document.getElementById('queryInput').value;
+            if (!query.trim()) {
+                alert('Please enter what you\'re looking for');
+                return;
+            }
+            
+            document.getElementById('productsContainer').innerHTML = '<div class="loading">🤖 Analyzing your preferences...</div>';
+            
+            try {
+                console.log('Sending request to AI:', query);
+                const response = await fetch(`${API_URL}/api/ai-recommend`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        query: query,
+                        user_id: currentUser ? currentUser.id : 'guest',
+                        disliked_ids: dislikedDrinks,
+                        allergies: allergies,
+                        avoid_list: avoidList,
+                        preferred_vendors: preferredVendors,
+                        category: selectedCategory !== 'all' ? selectedCategory : null
+                    })
+                });
+                
+                console.log('Response status:', response.status);
+                const data = await response.json();
+                console.log('Response data:', data);
+                console.log('Recommendations count:', data.recommendations ? data.recommendations.length : 0);
+                console.log('Recommendations:', data.recommendations);
+                
+                if (data.recommendations) {
+                    displayProducts(data.recommendations, `Smart Recommendations for: "${query}"`, data.reasoning);
+                } else if (data.error) {
+                    document.getElementById('productsContainer').innerHTML = 
+                        `<div class="loading" style="color: red;">Error: ${data.error}<br><small>${data.details || ''}</small></div>`;
+                }
+            } catch (error) {
+                console.error('Error getting recommendations:', error);
+                document.getElementById('productsContainer').innerHTML = 
+                    `<div class="loading" style="color: red;">Failed to get recommendations: ${error.message}<br>Make sure Ollama is running and the server is connected.</div>`;
+            }
+        }
+        
+        function displayProducts(products, title, reasoning) {
+            let html = `<h2>${title}</h2>`;
+            
+            // Reasoning removed from customer view
+            
+            html += '<div class="products-grid">';
+            
+            products.forEach(product => {
+                const isDisliked = dislikedDrinks.includes(product.id);
+                const isLiked = likedDrinks.includes(product.id);
+                const dislikeStyle = isDisliked ? 'opacity: 0.5; border: 2px solid #dc3545;' : '';
+                const likeStyle = isLiked ? 'border: 2px solid #28a745;' : '';
+                const cardStyle = isDisliked ? dislikeStyle : likeStyle;
+                const dislikeBtn = isDisliked ? '❌' : '👎';
+                const likeBtn = isLiked ? '💚' : '🤍';
+                
+                html += `
+                    <div class="product-card" style="${cardStyle}">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div style="display: flex; align-items: center; gap: 10px; flex: 1;">
+                                <div class="category">${product.category}</div>
+                                <button onclick="toggleLike(${product.id}, '${product.name}')" 
+                                        style="background: none; border: none; font-size: 1.2em; cursor: pointer; padding: 0;"
+                                        title="${isLiked ? 'Remove from likes' : 'Mark as liked'}">
+                                    ${likeBtn}
+                                </button>
+                            </div>
+                            <button onclick="toggleDislike(${product.id}, '${product.name}')" 
+                                    style="background: none; border: none; font-size: 0.9em; cursor: pointer; padding: 0; margin-left: auto;"
+                                    title="${isDisliked ? 'Remove from dislikes' : 'Mark as disliked'}">
+                                ${dislikeBtn}
+                            </button>
+                        </div>
+                        <h3>${product.name}</h3>
+                        ${product.vendor ? `<div style="background: #e8f5e9; color: #2e7d32; display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 0.8em; font-weight: 600; margin: 5px 0;">🏪 ${product.vendor}</div>` : ''}
+                        ${product.confidence ? `<div style="background: #00704A; color: white; display: inline-block; padding: 4px 12px; border-radius: 15px; font-size: 0.85em; font-weight: bold; margin: 5px 0;">✨ ${product.confidence}/7 Match</div>` : ''}
+                        <div style="color: #666; font-size: 0.9em; margin: 5px 0;">
+                            ${product.roast || ''} ${product.roast ? 'Roast' : ''}
+                        </div>
+                        <div style="color: #888; font-size: 0.85em; font-style: italic; margin: 5px 0;">
+                            ${product.notes || ''}
+                        </div>
+                        ${showPrices ? `<div class="price">$${product.price.toFixed(2)}</div>` : ''}
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            
+            document.getElementById('productsContainer').innerHTML = html;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Satisfy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'SoDo Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: #f7f7f7;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #00704A 0%, #005a3a 100%);
+            color: white;
+            padding: 20px 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            font-size: 1.8em;
+            font-weight: 600;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: background 0.3s;
+        }
+        
+        .nav-links a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 30px 40px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+        
+        .stat-card h3 {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .stat-card .value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #00704A;
+            margin-bottom: 5px;
+        }
+        
+        .stat-card .trend {
+            font-size: 0.85em;
+            color: #28a745;
+        }
+        
+        .stat-card.revenue .value {
+            color: #ffc107;
+        }
+        
+        .stat-card.vendors .value {
+            color: #17a2b8;
+        }
+        
+        .stat-card.customers .value {
+            color: #6f42c1;
+        }
+        
+        .dashboard-section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .section-header h2 {
+            color: #00704A;
+            font-size: 1.5em;
+        }
+        
+        .chart-container {
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 8px;
+            color: #666;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead {
+            background: #f8f9fa;
+        }
+        
+        th {
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .vendor-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .category-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+        
+        .rating-star {
+            color: #ffc107;
+        }
+        
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .activity-item {
+            padding: 15px;
+            border-left: 4px solid #00704A;
+            background: #f8f9fa;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        
+        .activity-time {
+            font-size: 0.8em;
+            color: #666;
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px 20px;
+            }
+            
+            .container {
+                padding: 20px 15px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-section {
+                padding: 15px;
+            }
+            
+            table {
+                font-size: 0.85em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📊 Admin Dashboard</h1>
+        <div class="nav-links">
+            <span id="admin-name" style="color: #ffc107; font-weight: 600; margin-right: 10px;"></span>
+            <a href="/">Customer View</a>
+            <a href="/vendor">Vendor Portal</a>
+            <button onclick="openPasswordModal()" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 1em; transition: background 0.3s; margin-right: 5px;">🔑 Change Password</button>
+            <button onclick="logout()" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 1em; transition: background 0.3s;">🚪 Logout</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- Key Metrics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Products</h3>
+                <div class="value" id="totalProducts">0</div>
+                <div class="trend">↑ All active products</div>
+            </div>
+            
+            <div class="stat-card revenue">
+                <h3>Total Revenue Potential</h3>
+                <div class="value" id="totalRevenue">$0</div>
+                <div class="trend">Based on product prices</div>
+            </div>
+            
+            <div class="stat-card vendors">
+                <h3>Active Vendors</h3>
+                <div class="value" id="totalVendors">0</div>
+                <div class="trend">Registered businesses</div>
+            </div>
+            
+            <div class="stat-card customers">
+                <h3>Categories</h3>
+                <div class="value" id="totalCategories">0</div>
+                <div class="trend">Product variety</div>
+            </div>
+            
+            <div class="stat-card">
+
+                <h3>Average Price</h3>
+                <div class="value" id="avgPrice">$0.00</div>
+                <div class="trend">Market pricing</div>
+            </div>
+        </div>
+        
+        <!-- Top Products -->
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2>🏆 Top Rated Products</h2>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Product</th>
+                        <th>Vendor</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody id="topProductsTable">
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px;">Loading...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="two-column">
+            <!-- Vendors Overview -->
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h2>🏪 Vendors Overview</h2>
+                </div>
+                <div id="vendorsOverview"></div>
+            </div>
+            
+            <!-- Categories Distribution -->
+            <div class="dashboard-section">
+                <div class="section-header">
+                    <h2>📂 Category Distribution</h2>
+                </div>
+                <div id="categoriesChart"></div>
+            </div>
+        </div>
+        
+        <!-- All Products Table -->
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2>📋 All Products</h2>
+                <input type="text" id="searchInput" placeholder="Search products..." 
+                       style="padding: 8px 16px; border: 2px solid #ddd; border-radius: 8px; width: 300px;"
+                       oninput="filterProducts()">
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Vendor</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody id="allProductsTable">
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px;">Loading...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Customer Account Management -->
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2>👥 Customer Account Management</h2>
+                <button class="btn-primary" onclick="openCustomerModal()" style="padding: 10px 20px; background: #00704A; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1em;">
+                    ➕ Add Customer
+                </button>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <input type="text" id="customerSearchInput" placeholder="🔍 Search customers by name or email..."
+                       style="padding: 8px 16px; border: 2px solid #ddd; border-radius: 8px; width: 300px;"
+                       oninput="filterCustomers()">
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Allergies</th>
+                        <th>Likes</th>
+                        <th>Dislikes</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="customersTable">
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px; color: #999;">No customers yet</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Vendor Account Management -->
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2>🏪 Vendor Account Management</h2>
+                <button class="btn-primary" onclick="openVendorModal()" style="padding: 10px 20px; background: #00704A; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1em;">
+                    ➕ Add Vendor
+                </button>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <input type="text" id="vendorSearchInput" placeholder="🔍 Search vendors by business name or email..."
+                       style="padding: 8px 16px; border: 2px solid #ddd; border-radius: 8px; width: 300px;"
+                       oninput="filterVendors()">
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Business Name</th>
+                        <th>Contact Person</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Status</th>
+                        <th>Products</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="vendorsTable">
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 40px; color: #999;">No vendors yet</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Customer Modal -->
+    <div id="customerModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; overflow-y: auto;">
+        <div style="max-width: 600px; margin: 50px auto; background: white; border-radius: 12px; padding: 30px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 id="customerModalTitle" style="color: #00704A;">Add Customer</h2>
+                <button onclick="closeCustomerModal()" style="background: none; border: none; font-size: 1.5em; cursor: pointer; color: #666;">✕</button>
+            </div>
+            
+            <form id="customerForm" onsubmit="saveCustomer(event)">
+                <input type="hidden" id="customerId">
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Name *</label>
+                    <input type="text" id="customerName" required style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px;">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Email *</label>
+                    <input type="email" id="customerEmail" required style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px;">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Allergies (comma-separated)</label>
+                    <input type="text" id="customerAllergies" placeholder="dairy, nuts, soy" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px;">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Avoid List (comma-separated)</label>
+                    <input type="text" id="customerAvoid" placeholder="coffee, sugar" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px;">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Preferred Vendors (comma-separated)</label>
+                    <input type="text" id="customerVendors" placeholder="Starbucks, Dunkin" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px;">
+                </div>
+                
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" onclick="closeCustomerModal()" style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                        Cancel
+                    </button>
+                    <button type="submit" style="padding: 10px 20px; background: #00704A; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                        Save Customer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Vendor Modal -->
+    <div id="vendorModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; overflow-y: auto;">
+        <div style="max-width: 600px; margin: 50px auto; background: white; border-radius: 12px; padding: 30px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 id="vendorModalTitle" style="color: #00704A;">Add Vendor</h2>
+                <button onclick="closeVendorModal()" style="background: none; border: none; font-size: 1.5em; cursor: pointer; color: #666;">✕</button>
+            </div>
+            
+            <form id="vendorForm" onsubmit="saveVendor(event)">
+                <input type="hidden" id="vendorId">
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Business Name *</label>
+                    <input type="text" id="vendorBusinessName" required style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px;">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Contact Person *</label>
+                    <input type="text" id="vendorContactPerson" required style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px;">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Email *</label>
+                    <input type="email" id="vendorEmail" required style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px;">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Phone</label>
+                    <input type="tel" id="vendorPhone" placeholder="+1 (555) 123-4567" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px;">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Facebook Business ID</label>
+                    <input type="text" id="vendorFacebookId" placeholder="Optional" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px;">
+                </div>
+                
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" onclick="closeVendorModal()" style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                        Cancel
+                    </button>
+                    <button type="submit" style="padding: 10px 20px; background: #00704A; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                        Save Vendor
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Change Password Modal -->
+    <div id="passwordModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; overflow-y: auto;">
+        <div style="max-width: 500px; margin: 100px auto; background: white; border-radius: 12px; padding: 30px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="color: #00704A;">🔑 Change Password</h2>
+                <button onclick="closePasswordModal()" style="background: none; border: none; font-size: 1.5em; cursor: pointer; color: #666;">✕</button>
+            </div>
+            
+            <form id="passwordForm" onsubmit="changePassword(event)">
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Current Password *</label>
+                    <input type="password" id="currentPassword" required autocomplete="current-password" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px;">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">New Password * <span style="color: #666; font-weight: 400; font-size: 0.9em;">(min. 6 characters)</span></label>
+                    <input type="password" id="newPassword" required minlength="6" autocomplete="new-password" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px;">
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Confirm New Password *</label>
+                    <input type="password" id="confirmPassword" required minlength="6" autocomplete="new-password" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px;">
+                </div>
+                
+                <div id="passwordError" style="display: none; background: #fee; color: #c33; padding: 10px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #c33;"></div>
+                
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" onclick="closePasswordModal()" style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                        Cancel
+                    </button>
+                    <button type="submit" id="passwordSubmitBtn" style="padding: 10px 20px; background: #00704A; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                        Change Password
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        const API_URL = 'http://localhost:5000';
+        let allProducts = [];
+        let allCustomers = [];
+        let allVendors = [];
+        let editingCustomerId = null;
+        let editingVendorId = null;
+        
+        // Check admin session
+        async function checkSession() {
+            try {
+                const response = await fetch(`${API_URL}/api/admin/session`);
+                if (response.ok) {
+                    const session = await response.json();
+                    document.getElementById('admin-name').textContent = `👤 ${session.name}`;
+                } else {
+                    window.location.href = '/admin-login';
+                }
+            } catch (error) {
+                console.error('Session check failed:', error);
+                window.location.href = '/admin-login';
+            }
+        }
+        
+        // Logout function
+        async function logout() {
+            if (!confirm('Are you sure you want to logout?')) return;
+            try {
+                await fetch(`${API_URL}/api/admin/logout`, { method: 'POST' });
+                window.location.href = '/admin-login';
+            } catch (error) {
+                console.error('Logout error:', error);
+                alert('Logout failed. Please try again.');
+            }
+        }
+        
+        window.onload = function() {
+            checkSession();
+            loadDashboardData();
+            loadCustomers();
+        };
+        
+        async function loadDashboardData() {
+            try {
+                const response = await fetch(`${API_URL}/api/products`);
+                allProducts = await response.json();
+                
+                updateMetrics();
+                displayTopProducts();
+                displayVendorsOverview();
+                displayCategoriesDistribution();
+                displayAllProducts(allProducts);
+                
+                // Load vendors after products so product count is accurate
+                await loadVendors();
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            }
+        }
+        
+        function updateMetrics() {
+            // Total Products
+            document.getElementById('totalProducts').textContent = allProducts.length;
+            
+            // Total Revenue Potential
+            const totalRevenue = allProducts.reduce((sum, p) => sum + p.price, 0);
+            document.getElementById('totalRevenue').textContent = '$' + totalRevenue.toFixed(2);
+            
+            // Active Vendors
+            const vendors = new Set(allProducts.map(p => p.vendor));
+            document.getElementById('totalVendors').textContent = vendors.size;
+            
+            // Categories
+            const categories = new Set(allProducts.map(p => p.category));
+            document.getElementById('totalCategories').textContent = categories.size;
+            
+            // Average Price
+            const avgPrice = allProducts.reduce((sum, p) => sum + p.price, 0) / allProducts.length;
+            document.getElementById('avgPrice').textContent = '$' + avgPrice.toFixed(2);
+        }
+        
+        function displayTopProducts() {
+            const topProducts = [...allProducts]
+                .sort((a, b) => b.price - a.price)
+                .slice(0, 10);
+            
+            const tbody = document.getElementById('topProductsTable');
+            tbody.innerHTML = topProducts.map((p, index) => `
+                <tr>
+                    <td><strong>${index + 1}</strong></td>
+                    <td><strong>${p.name}</strong></td>
+                    <td><span class="vendor-badge">${p.vendor || 'Unknown'}</span></td>
+                    <td><span class="category-badge">${p.category}</span></td>
+                    <td>$${p.price.toFixed(2)}</td>
+                </tr>
+            `).join('');
+        }
+        
+        function displayVendorsOverview() {
+            const vendorStats = {};
+            
+            allProducts.forEach(p => {
+                const vendor = p.vendor || 'Unknown';
+                if (!vendorStats[vendor]) {
+                    vendorStats[vendor] = {
+                        count: 0,
+                        totalRevenue: 0
+                    };
+                }
+                vendorStats[vendor].count++;
+                vendorStats[vendor].totalRevenue += p.price;
+            });
+            
+            const vendorsDiv = document.getElementById('vendorsOverview');
+            vendorsDiv.innerHTML = Object.entries(vendorStats)
+                .sort((a, b) => b[1].count - a[1].count)
+                .map(([vendor, stats]) => `
+                    <div style="padding: 15px; background: #f8f9fa; border-radius: 8px; margin-bottom: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong style="font-size: 1.1em;">${vendor}</strong>
+                                <div style="color: #666; font-size: 0.9em; margin-top: 5px;">
+                                    ${stats.count} products
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="color: #00704A; font-weight: bold;">$${stats.totalRevenue.toFixed(2)}</div>
+                                <div style="font-size: 0.8em; color: #666;">Total value</div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+        }
+        
+        function displayCategoriesDistribution() {
+            const categoryStats = {};
+            
+            allProducts.forEach(p => {
+                const category = p.category;
+                if (!categoryStats[category]) {
+                    categoryStats[category] = 0;
+                }
+                categoryStats[category]++;
+            });
+            
+            const total = allProducts.length;
+            const categoriesDiv = document.getElementById('categoriesChart');
+            
+            categoriesDiv.innerHTML = Object.entries(categoryStats)
+                .sort((a, b) => b[1] - a[1])
+                .map(([category, count]) => {
+                    const percentage = (count / total * 100).toFixed(1);
+                    return `
+                        <div style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <span style="font-weight: 600;">${category}</span>
+                                <span style="color: #666;">${count} (${percentage}%)</span>
+                            </div>
+                            <div style="background: #e9ecef; border-radius: 10px; height: 10px; overflow: hidden;">
+                                <div style="background: linear-gradient(90deg, #00704A, #28a745); height: 100%; width: ${percentage}%;"></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+        }
+        
+        function displayAllProducts(products) {
+            const tbody = document.getElementById('allProductsTable');
+            
+            if (products.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px;">No products found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = products.map(p => `
+                <tr>
+                    <td>${p.id}</td>
+                    <td><strong>${p.name}</strong></td>
+                    <td><span class="vendor-badge">${p.vendor || 'Unknown'}</span></td>
+                    <td><span class="category-badge">${p.category}</span></td>
+                    <td>$${p.price.toFixed(2)}</td>
+                    <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${p.notes}</td>
+                </tr>
+            `).join('');
+        }
+        
+        function filterProducts() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = allProducts.filter(p => 
+                p.name.toLowerCase().includes(searchTerm) ||
+                p.category.toLowerCase().includes(searchTerm) ||
+                (p.vendor && p.vendor.toLowerCase().includes(searchTerm)) ||
+                p.notes.toLowerCase().includes(searchTerm)
+            );
+            displayAllProducts(filtered);
+        }
+        
+        // Customer Management Functions
+        async function loadCustomers() {
+            try {
+                const response = await fetch(`${API_URL}/api/admin/customers`);
+                allCustomers = await response.json();
+                displayCustomers(allCustomers);
+            } catch (error) {
+                console.error('Error loading customers:', error);
+            }
+        }
+        
+        function displayCustomers(customers) {
+            const tbody = document.getElementById('customersTable');
+            
+            if (customers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: #999;">No customers yet</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = customers.map(c => `
+                <tr>
+                    <td>${c.id}</td>
+                    <td><strong>${c.name}</strong></td>
+                    <td>${c.email}</td>
+                    <td>${c.allergies && c.allergies.length > 0 ? c.allergies.join(', ') : '-'}</td>
+                    <td><span style="color: #28a745; font-weight: bold;">${c.liked_drinks ? c.liked_drinks.length : 0}</span></td>
+                    <td><span style="color: #dc3545; font-weight: bold;">${c.disliked_drinks ? c.disliked_drinks.length : 0}</span></td>
+                    <td>
+                        <button onclick="editCustomer(${c.id})" style="padding: 5px 10px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; margin-right: 5px;">✏️ Edit</button>
+                        <button onclick="deleteCustomer(${c.id}, '${c.name}')" style="padding: 5px 10px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer;">🗑️ Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function filterCustomers() {
+            const searchTerm = document.getElementById('customerSearchInput').value.toLowerCase();
+            const filtered = allCustomers.filter(c => 
+                c.name.toLowerCase().includes(searchTerm) ||
+                c.email.toLowerCase().includes(searchTerm)
+            );
+            displayCustomers(filtered);
+        }
+        
+        function openCustomerModal() {
+            editingCustomerId = null;
+            document.getElementById('customerModalTitle').textContent = 'Add Customer';
+            document.getElementById('customerForm').reset();
+            document.getElementById('customerId').value = '';
+            document.getElementById('customerModal').style.display = 'block';
+        }
+        
+        function closeCustomerModal() {
+            document.getElementById('customerModal').style.display = 'none';
+        }
+        
+        function editCustomer(id) {
+            const customer = allCustomers.find(c => c.id === id);
+            if (!customer) return;
+            
+            editingCustomerId = id;
+            document.getElementById('customerModalTitle').textContent = 'Edit Customer';
+            document.getElementById('customerId').value = customer.id;
+            document.getElementById('customerName').value = customer.name;
+            document.getElementById('customerEmail').value = customer.email;
+            document.getElementById('customerAllergies').value = customer.allergies ? customer.allergies.join(', ') : '';
+            document.getElementById('customerAvoid').value = customer.avoid_list ? customer.avoid_list.join(', ') : '';
+            document.getElementById('customerVendors').value = customer.preferred_vendors ? customer.preferred_vendors.join(', ') : '';
+            
+            document.getElementById('customerModal').style.display = 'block';
+        }
+        
+        async function saveCustomer(event) {
+            event.preventDefault();
+            
+            const parseList = (str) => str.split(',').map(s => s.trim()).filter(s => s.length > 0);
+            
+            const customerData = {
+                name: document.getElementById('customerName').value,
+                email: document.getElementById('customerEmail').value,
+                allergies: parseList(document.getElementById('customerAllergies').value),
+                avoid_list: parseList(document.getElementById('customerAvoid').value),
+                preferred_vendors: parseList(document.getElementById('customerVendors').value),
+                liked_drinks: editingCustomerId ? allCustomers.find(c => c.id === editingCustomerId)?.liked_drinks || [] : [],
+                disliked_drinks: editingCustomerId ? allCustomers.find(c => c.id === editingCustomerId)?.disliked_drinks || [] : []
+            };
+            
+            try {
+                let response;
+                if (editingCustomerId) {
+                    response = await fetch(`${API_URL}/api/admin/customers/${editingCustomerId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(customerData)
+                    });
+                } else {
+                    response = await fetch(`${API_URL}/api/admin/customers`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(customerData)
+                    });
+                }
+                
+                if (response.ok) {
+                    alert(editingCustomerId ? 'Customer updated successfully!' : 'Customer added successfully!');
+                    closeCustomerModal();
+                    loadCustomers();
+                } else {
+                    const error = await response.json();
+                    alert('Error: ' + error.error);
+                }
+            } catch (error) {
+                console.error('Error saving customer:', error);
+                alert('Failed to save customer');
+            }
+        }
+        
+        async function deleteCustomer(id, name) {
+            if (!confirm(`Delete customer "${name}"? This cannot be undone.`)) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/api/admin/customers/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    alert('Customer deleted successfully');
+                    loadCustomers();
+                } else {
+                    const error = await response.json();
+                    alert('Error: ' + error.error);
+                }
+            } catch (error) {
+                console.error('Error deleting customer:', error);
+                alert('Failed to delete customer');
+            }
+        }
+        
+        // Vendor Management Functions
+        async function loadVendors() {
+            try {
+                const response = await fetch(`${API_URL}/api/admin/vendors`);
+                allVendors = await response.json();
+                
+                // Count products per vendor
+                allVendors.forEach(v => {
+                    v.product_count = allProducts.filter(p => p.vendor === v.business_name).length;
+                });
+                
+                displayVendors(allVendors);
+            } catch (error) {
+                console.error('Error loading vendors:', error);
+            }
+        }
+        
+        function displayVendors(vendors) {
+            const tbody = document.getElementById('vendorsTable');
+            
+            if (vendors.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 40px; color: #999;">No vendors yet</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = vendors.map(v => {
+                let statusBadge = '';
+                if (v.status === 'approved') {
+                    statusBadge = '<span style="background: #28a745; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.85em;">✓ Approved</span>';
+                } else if (v.status === 'pending') {
+                    statusBadge = '<span style="background: #ffc107; color: #333; padding: 4px 12px; border-radius: 12px; font-size: 0.85em;">⏳ Pending</span>';
+                } else if (v.status === 'suspended') {
+                    statusBadge = '<span style="background: #fd7e14; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.85em;">⏸️ Suspended</span>';
+                } else if (v.status === 'blocked') {
+                    statusBadge = '<span style="background: #6c757d; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.85em;">🚫 Blocked</span>';
+                } else {
+                    statusBadge = '<span style="background: #dc3545; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.85em;">✗ Rejected</span>';
+                }
+                
+                let actions = '';
+                if (v.status === 'pending') {
+                    actions = `
+                        <button onclick="approveVendor(${v.id})" style="padding: 5px 10px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; margin-right: 5px;" title="Approve & Send Verification">✓ Approve</button>
+                        <button onclick="rejectVendor(${v.id})" style="padding: 5px 10px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer; margin-right: 5px;" title="Reject Application">✗ Reject</button>
+                    `;
+                }
+                
+                // Block/Unblock button (admin override)
+                if (v.status === 'blocked') {
+                    actions += `
+                        <button onclick="unblockVendor(${v.id})" style="padding: 5px 10px; background: #17a2b8; color: white; border: none; border-radius: 5px; cursor: pointer; margin-right: 5px;" title="Unblock Vendor">🔓 Unblock</button>
+                    `;
+                } else if (v.status === 'suspended') {
+                    actions += `
+                        <button onclick="unsuspendVendor(${v.id})" style="padding: 5px 10px; background: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer; margin-right: 5px;" title="Restore Account">▶️ Unsuspend</button>
+                    `;
+                } else if (v.status === 'approved') {
+                    actions += `
+                        <button onclick="suspendVendor(${v.id})" style="padding: 5px 10px; background: #fd7e14; color: white; border: none; border-radius: 5px; cursor: pointer; margin-right: 5px;" title="Suspend Temporarily (e.g., payment)">⏸️ Suspend</button>
+                        <button onclick="blockVendor(${v.id})" style="padding: 5px 10px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer; margin-right: 5px;" title="Block Permanently">🚫 Block</button>
+                    `;
+                }
+                
+                actions += `
+                    <button onclick="editVendor(${v.id})" style="padding: 5px 10px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; margin-right: 5px;">✏️ Edit</button>
+                    <button onclick="deleteVendor(${v.id}, '${v.business_name}')" style="padding: 5px 10px; background: #6c757d; color: white; border: none; border-radius: 5px; cursor: pointer;">🗑️ Delete</button>
+                `;
+                
+                return `
+                    <tr>
+                        <td>${v.id}</td>
+                        <td><strong>${v.business_name}</strong></td>
+                        <td>${v.contact_person || '-'}</td>
+                        <td>${v.email}</td>
+                        <td>${v.phone || '-'}</td>
+                        <td>${statusBadge}</td>
+                        <td><span style="font-weight: bold; color: #00704A;">${v.product_count}</span></td>
+                        <td style="white-space: nowrap;">${actions}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        function filterVendors() {
+            const searchTerm = document.getElementById('vendorSearchInput').value.toLowerCase();
+            const filtered = allVendors.filter(v => 
+                v.business_name.toLowerCase().includes(searchTerm) ||
+                v.email.toLowerCase().includes(searchTerm) ||
+                (v.contact_person && v.contact_person.toLowerCase().includes(searchTerm))
+            );
+            displayVendors(filtered);
+        }
+        
+        function openVendorModal() {
+            editingVendorId = null;
+            document.getElementById('vendorModalTitle').textContent = 'Add Vendor';
+            document.getElementById('vendorForm').reset();
+            document.getElementById('vendorId').value = '';
+            document.getElementById('vendorModal').style.display = 'block';
+        }
+        
+        function closeVendorModal() {
+            document.getElementById('vendorModal').style.display = 'none';
+        }
+        
+        function editVendor(id) {
+            const vendor = allVendors.find(v => v.id === id);
+            if (!vendor) return;
+            
+            editingVendorId = id;
+            document.getElementById('vendorModalTitle').textContent = 'Edit Vendor';
+            document.getElementById('vendorId').value = vendor.id;
+            document.getElementById('vendorBusinessName').value = vendor.business_name;
+            document.getElementById('vendorContactPerson').value = vendor.contact_person || '';
+            document.getElementById('vendorEmail').value = vendor.email;
+            document.getElementById('vendorPhone').value = vendor.phone || '';
+            document.getElementById('vendorFacebookId').value = vendor.facebook_business_id || '';
+            
+            document.getElementById('vendorModal').style.display = 'block';
+        }
+        
+        async function saveVendor(event) {
+            event.preventDefault();
+            
+            const vendorData = {
+                business_name: document.getElementById('vendorBusinessName').value,
+                contact_person: document.getElementById('vendorContactPerson').value,
+                email: document.getElementById('vendorEmail').value,
+                phone: document.getElementById('vendorPhone').value,
+                facebook_business_id: document.getElementById('vendorFacebookId').value
+            };
+            
+            try {
+                let response;
+                if (editingVendorId) {
+                    response = await fetch(`${API_URL}/api/admin/vendors/${editingVendorId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(vendorData)
+                    });
+                } else {
+                    response = await fetch(`${API_URL}/api/admin/vendors`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(vendorData)
+                    });
+                }
+                
+                if (response.ok) {
+                    alert(editingVendorId ? 'Vendor updated successfully!' : 'Vendor added successfully! Status: Pending approval.');
+                    closeVendorModal();
+                    await loadVendors();
+                } else {
+                    const error = await response.json();
+                    alert('Error: ' + error.error);
+                }
+            } catch (error) {
+                console.error('Error saving vendor:', error);
+                alert('Failed to save vendor');
+            }
+        }
+        
+        async function approveVendor(id) {
+            if (!confirm('Approve this vendor? A verification email will be sent to confirm their identity and grant admin access.')) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/api/admin/vendors/${id}/approve`, {
+                    method: 'POST'
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    alert('Vendor approved! Verification email sent.\n\nEmail Preview:\n' + result.email_preview);
+                    await loadVendors();
+                } else {
+                    const error = await response.json();
+                    alert('Error: ' + error.error);
+                }
+            } catch (error) {
+                console.error('Error approving vendor:', error);
+                alert('Failed to approve vendor');
+            }
+        }
+        
+        async function rejectVendor(id) {
+            const reason = prompt('Enter rejection reason:', 'Application did not meet requirements');
+            if (!reason) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/api/admin/vendors/${id}/reject`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ reason })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    alert('Vendor rejected. Notification email sent.\n\nEmail Preview:\n' + result.email_preview);
+                    await loadVendors();
+                } else {
+                    const error = await response.json();
+                    alert('Error: ' + error.error);
+                }
+            } catch (error) {
+                console.error('Error rejecting vendor:', error);
+                alert('Failed to reject vendor');
+            }
+        }
+        
+        async function deleteVendor(id, name) {
+            if (!confirm(`Delete vendor "${name}"? This will not delete their products. This cannot be undone.`)) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/api/admin/vendors/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    alert('Vendor deleted successfully');
+                    await loadVendors();
+                } else {
+                    const error = await response.json();
+                    alert('Error: ' + error.error);
+                }
+            } catch (error) {
+                console.error('Error deleting vendor:', error);
+                alert('Failed to delete vendor');
+            }
+        }
+        
+        async function blockVendor(id) {
+            const reason = prompt('Enter reason for blocking this vendor:', 'Policy violation');
+            if (!reason) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/api/admin/vendors/${id}/block`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ reason })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    alert('Vendor blocked successfully.\n\nEmail Preview:\n' + result.email_preview);
+                    await loadVendors();
+                } else {
+                    const error = await response.json();
+                    alert('Error: ' + error.error);
+                }
+            } catch (error) {
+                console.error('Error blocking vendor:', error);
+                alert('Failed to block vendor');
+            }
+        }
+        
+        async function unblockVendor(id) {
+            if (!confirm('Unblock this vendor? They will regain access to their account.')) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/api/admin/vendors/${id}/unblock`, {
+                    method: 'POST'
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    alert('Vendor unblocked successfully.\n\nEmail Preview:\n' + result.email_preview);
+                    await loadVendors();
+                } else {
+                    const error = await response.json();
+                    alert('Error: ' + error.error);
+                }
+            } catch (error) {
+                console.error('Error unblocking vendor:', error);
+                alert('Failed to unblock vendor');
+            }
+        }
+        
+        async function suspendVendor(id) {
+            const reason = prompt('Enter reason for suspending this vendor:', 'Payment required');
+            if (!reason) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/api/admin/vendors/${id}/suspend`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ reason })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    alert('Vendor suspended successfully.\n\nEmail Preview:\n' + result.email_preview);
+                    await loadVendors();
+                } else {
+                    const error = await response.json();
+                    alert('Error: ' + error.error);
+                }
+            } catch (error) {
+                console.error('Error suspending vendor:', error);
+                alert('Failed to suspend vendor');
+            }
+        }
+        
+        async function unsuspendVendor(id) {
+            if (!confirm('Unsuspend this vendor? They will regain access to their account.')) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/api/admin/vendors/${id}/unsuspend`, {
+                    method: 'POST'
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    alert('Vendor unsuspended successfully.\n\nEmail Preview:\n' + result.email_preview);
+                    await loadVendors();
+                } else {
+                    const error = await response.json();
+                    alert('Error: ' + error.error);
+                }
+            } catch (error) {
+                console.error('Error unsuspending vendor:', error);
+                alert('Failed to unsuspend vendor');
+            }
+        }
+        
+        // Password change functions
+        function openPasswordModal() {
+            document.getElementById('passwordModal').style.display = 'block';
+            document.getElementById('passwordForm').reset();
+            document.getElementById('passwordError').style.display = 'none';
+        }
+        
+        function closePasswordModal() {
+            document.getElementById('passwordModal').style.display = 'none';
+            document.getElementById('passwordForm').reset();
+            document.getElementById('passwordError').style.display = 'none';
+        }
+        
+        async function changePassword(event) {
+            event.preventDefault();
+            
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const errorDiv = document.getElementById('passwordError');
+            const submitBtn = document.getElementById('passwordSubmitBtn');
+            
+            // Client-side validation
+            if (newPassword !== confirmPassword) {
+                errorDiv.textContent = 'New passwords do not match';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                errorDiv.textContent = 'Password must be at least 6 characters';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            // Disable button during request
+            submitBtn.disabled = true;
+            submitBtn.textContent = '🔄 Changing...';
+            errorDiv.style.display = 'none';
+            
+            try {
+                const response = await fetch(`${API_URL}/api/admin/change-password`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        current_password: currentPassword,
+                        new_password: newPassword,
+                        confirm_password: confirmPassword
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert('✅ Password changed successfully!');
+                    closePasswordModal();
+                } else {
+                    errorDiv.textContent = result.error || 'Failed to change password';
+                    errorDiv.style.display = 'block';
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Change Password';
+                }
+            } catch (error) {
+                console.error('Error changing password:', error);
+                errorDiv.textContent = 'Connection error. Please try again.';
+                errorDiv.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Change Password';
+            }
+        }
+    </script>
+</body>
+</html>
