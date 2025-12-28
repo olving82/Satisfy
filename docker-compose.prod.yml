@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16
+    container_name: satisfy-postgres-prod
+    environment:
+      POSTGRES_USER: satisfy_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_this_password}
+      POSTGRES_DB: satisfy
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U satisfy_user -d satisfy"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Flask Application
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    container_name: satisfy-app-prod
+    environment:
+      DATABASE_URL: postgresql://satisfy_user:${POSTGRES_PASSWORD:-change_this_password}@postgres:5432/satisfy
+      SECRET_KEY: ${SECRET_KEY:-change_this_in_production_use_long_random_string}
+      FLASK_ENV: production
+      OLLAMA_API: ${OLLAMA_API:-http://host.docker.internal:11434}
+      SHOW_PRICES: ${SHOW_PRICES:-false}
+      
+      # Facebook OAuth
+      FACEBOOK_APP_ID: ${FACEBOOK_APP_ID:-}
+      FACEBOOK_APP_SECRET: ${FACEBOOK_APP_SECRET:-}
+      FACEBOOK_REDIRECT_URI: ${FACEBOOK_REDIRECT_URI:-https://yourdomain.com/auth/facebook/callback}
+      
+      # Email Settings
+      EMAIL_PROVIDER: ${EMAIL_PROVIDER:-mock}
+      FROM_EMAIL: ${FROM_EMAIL:-noreply@satisfy.app}
+      FROM_NAME: ${FROM_NAME:-Satisfy Platform}
+      SENDGRID_API_KEY: ${SENDGRID_API_KEY:-}
+      
+      # SMTP Settings (if using SMTP instead of SendGrid)
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+    ports:
+      - "80:5000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  postgres_data:
+    driver: local
